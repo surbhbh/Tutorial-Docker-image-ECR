@@ -1,0 +1,42 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 12
+
+  pre_build:
+    commands:
+      # Write out the NPM rc file for token usage.
+      # More info here: https://docs.npmjs.com/using-private-packages-in-a-ci-cd-workflow
+      - echo //registry.npmjs.org/:_authToken=$NPM_TOKEN > ~/.npmrc
+      - echo Build started on `date`
+      - export SOURCE_BRANCH=${CODEBUILD_SOURCE_VERSION}
+      - COMMIT_INFO_MESSAGE=`git show -s --pretty=%B`
+      - export COMMIT_INFO_MESSAGE
+      - echo $COMMIT_INFO_MESSAGE
+      - COMMIT_INFO_AUTHOR=`git show -s --pretty=%an`
+      - export COMMIT_INFO_AUTHOR
+      - echo $COMMIT_INFO_AUTHOR
+      - COMMIT_INFO_BRANCH=`git name-rev --name-only HEAD`
+      - export COMMIT_INFO_BRANCH
+      - echo $COMMIT_INFO_BRANCH
+      - echo $MERGE_BRANCH
+      - git config --global user.email "you@example.com"
+      - git config --global user.name "Your Name"
+      - echo "checking out branch $MERGE_BRANCH"
+      - git checkout $MERGE_BRANCH
+      - echo "git merge $SOURCE_BRANCH"
+      - git merge $SOURCE_BRANCH
+      - npm ci --unsafe-perm
+      - npm up @tasc/test-fixtures
+
+  build:
+    commands:
+      - npm run build
+
+  post_build:
+    commands:
+      - echo Copy started on `date`
+    finally:
+      - echo Build completed on `date`
