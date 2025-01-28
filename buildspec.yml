@@ -3,7 +3,7 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      nodejs: 16
+      nodejs: 20
 
   pre_build:
     commands:
@@ -28,6 +28,7 @@ phases:
       - git checkout $MERGE_BRANCH
       - echo "git merge $SOURCE_BRANCH"
       - git merge $SOURCE_BRANCH
+      - npm install
       - npm ci --unsafe-perm
       - npm up @tasc/test-fixtures
 
