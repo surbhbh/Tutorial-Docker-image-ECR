@@ -28,6 +28,8 @@ phases:
       - git checkout $MERGE_BRANCH
       - echo "git merge $SOURCE_BRANCH"
       - git merge $SOURCE_BRANCH
+      - npm cache clean --force
+      - npm install -g npm
       - npm ci --unsafe-perm
       - npm up @tasc/test-fixtures
 
